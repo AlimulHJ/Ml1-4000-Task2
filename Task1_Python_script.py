@@ -5,7 +5,7 @@ import os
 import requests
 import re
 # Code here - Import BeautifulSoup library
-
+from bs4 import BeautifulSoup
 # Code ends here
 
 # function to get the html source text of the medium article
@@ -13,8 +13,11 @@ def get_page():
 	global url
 	
 	# Code here - Ask the user to input "Enter url of a medium article: " and collect it in url
-	
+	url = input("Enter url of a medium article: ")
 	# Code ends here
+
+	# Add User-Agent header
+	headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
 	
 	# handling possible error
 	if not re.match(r'https?://medium.com/',url):
@@ -22,7 +25,7 @@ def get_page():
 		sys.exit(1)
 
 	# Code here - Call get method in requests object, pass url and collect it in res
-	
+	res = requests.get(url, headers=headers)
 	# Code ends here
 
 	res.raise_for_status()
@@ -49,18 +52,19 @@ def collect_text(soup):
 
 # function to save file in the current directory
 def save_file(text):
-	if not os.path.exists('./scraped_articles'):
-		os.mkdir('./scraped_articles')
-	name = url.split("/")[-1]
-	print(name)
-	fname = f'scraped_articles/{name}.txt'
-	
-	# Code here - write a file using with (2 lines)
-	
+    if not os.path.exists('./scraped_articles'):
+        os.mkdir('./scraped_articles')
+    name = url.split("/")[-1]
+    print(name)
+    fname = f'scraped_articles/{name}.txt'
+    
+    # Code here - write a file using with (2 lines)
+    with open(fname, 'w', encoding='utf-8') as file:
+        file.write(text)
 
-	# Code ends here
+    # Code ends here
 
-	print(f'File saved in directory {fname}')
+    print(f'File saved in directory {fname}')
 
 
 if __name__ == '__main__':
